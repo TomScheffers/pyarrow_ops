@@ -54,9 +54,9 @@ j = join(t, t2, on=['Animal'])
 ### To Do's
 - [x] Improve groupby speed by not create copys of table
 - [ ] Add window functions on Grouping class
-- [ ] Improve speed of split function by avoiding for loops
-- [ ] Allow for functions to be class methods of pa.Table (t.groupby(['Animal']))*
-- [ ] Extend the pq.ParquetDataset class (leverage partitions for joins)
+- [ ] Improve speed of groupby by avoiding for loops
+- [ ] Allow for functions to be classmethods of pa.Table* (t.groupby())
+- [ ] Extend the pq.ParquetDataset with methods
 - [ ] Add more join options (left, right, outer, full, cross)
 
 *One of the main difficulties is that the pyarrow classes are written in C and do not have a __dict__ method, this hinders inheritance, adding classmethods, etc.
