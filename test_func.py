@@ -1,5 +1,7 @@
 import pyarrow as pa 
-from pyarrow_ops import join, filters, groupby, head, drop_duplicates
+from pyarrow_ops import Table, join, filters, groupby, head, drop_duplicates
+
+# TODO: Pass indices instead of tables in split()
 
 # Create data
 t = pa.Table.from_pydict({
@@ -30,7 +32,7 @@ head(g)
 # Filters
 print("Filters:")
 f = filters(t, ('Animal', '=', 'Falcon'))
-f = filters(t, ('Animal', 'not in', ['Falcon', 'Duck']))
+f = filters(t, [('Animal', 'not in', ['Falcon', 'Duck']), ('Max Speed', '<', 25)])
 head(f)
 
 # Join operations

@@ -62,7 +62,7 @@ def arr_op_to_idxs(arr, op, value):
 def filters(table, filters):
     filters = ([filters] if isinstance(filters, tuple) else filters)
     # Filter is a list of (col, op, value) tuples
-    idxs = np.array(range(table.num_rows))
+    idxs = np.arange(table.num_rows)
     for (col, op, value) in filters: #= or ==, !=, <, >, <=, >=, in and not in
         arr = table.column(col).to_numpy()
         f_idxs = arr_op_to_idxs(arr[idxs], op, value)
@@ -70,7 +70,10 @@ def filters(table, filters):
     return table.take(idxs)
 
 # Splitting tables by columns
-def split(table, columns, group=()):
+def split(table, columns, group=(), idx=None):
+    # idx keeps track of the orginal table index, getting split recurrently
+    if not isinstance(idx, np.ndarray):
+        idx = np.arange(table.num_rows)
     arr = table.column(columns[0]).to_numpy()
     if np.unique(arr).size < 1000:
         # This method is much faster for small amount of categories, but slower for large ones
@@ -84,11 +87,12 @@ def split(table, columns, group=()):
     # TODO: Do not take from table, but pass indexes instead. Take in underlying functions
 
     # Gathering splits of the table, this is the main botteneck for large amounts of categories
-    tables = {v: table.take(i) for v, i in val_idxs.items()}
+    # tables = {v: table.take(i) for v, i in val_idxs.items()}
+
     if columns[1:]:
-        return [s for v, t in tables.items() for s in split(t, columns[1:], group + (v,))]
+        return [s for v, i in val_idxs.items() for s in split(table, columns[1:], group + (v,), idx[i])]
     else:
-        return [(group + (v,), t) for v, t in tables.items()]
+        return [(group + (v,), i) for v, i in val_idxs.items()]
 
 # Grouping / groupby methods
 agg_methods = {
@@ -109,11 +113,12 @@ class Grouping():
         self.table = table
         self.columns = columns
         self.groups = split(table, columns)
-        self.group_keys, self.group_tables = zip(*self.groups)
+        self.group_keys, self.group_idxs = zip(*self.groups)
         self.set_methods()
 
     def __iter__(self):
-        return iter(self.groups)
+        for g, idx in self.groups:
+            yield g, self.table.take(idx)
 
     # Aggregation methods
     def set_methods(self):
@@ -122,8 +127,10 @@ class Grouping():
 
     def aggregate(self, methods):
         agg = dict(zip(self.columns, [pa.array(l) for l in zip(*self.group_keys)]))
+        # Gather columns to numpy
+        data = {k: self.table.column(k).to_numpy() for k in methods.keys()}
         for col, f in methods.items():
-            agg[col] = pa.array([f(t.column(col).to_numpy()) for t in self.group_tables])
+            agg[col] = pa.array([f(data[col][i]) for i in self.group_idxs])
         return pa.Table.from_arrays(list(agg.values()), names=list(agg.keys()))
 
     def agg(self, methods):
@@ -134,8 +141,8 @@ class Grouping():
     def window(self, methods):
         raise Exception("Window function is not implemented yet")
 
-def groupby(table, columns):
-    return Grouping(table, columns)
+def groupby(table, by):
+    return Grouping(table, by)
 
 # Drop duplicates
 def set_idx(d, key, value, keep):
@@ -162,7 +169,7 @@ def drop_duplicates(table, on=[], keep='last'):
     return table.take(sorted([i for i in d.values() if i is not None]))
 
 # Show for easier printing
-def head(table, n=10, max_width=100):
+def head(table, n=5, max_width=100):
     # Extract head data
     t = table.slice(length=n)
     head = {k: list(map(str, v)) for k, v in t.to_pydict().items()}
@@ -177,3 +184,47 @@ def head(table, n=10, max_width=100):
         adjust = [w.ljust(max(cw, dw) + 2) for w, cw, dw in zip(data[i], col_width, data_width)]
         print(('Row  ' if i == 0 else str(i-1).ljust(5)) + "".join(adjust)[:max_width])
     print('\n')
+
+# Table wrapper: does not work because pa.Table.from_pandas/from_arrays/from_pydict always returns pa.Table
+class Table(pa.Table):
+    def __init__(*args, **kwargs):
+        super(Table, self).__init__(*args, **kwargs)
+    
+    def join(self, right, on):
+        return join(self, right, on)
+    
+    def filters(self, filters):
+        return filters(self, filters)
+    
+    def groupby(self, by):
+        return Grouper(self, by)
+
+    def drop_duplicates(self, on=[], keep='last'):
+        return drop_duplicates(self, on, keep)
+
+    def head(self, n=5):
+        return head(self, n)
+
+# Add methods to class pa.Table or instances of pa.Table: does not work because pyarrow.lib.Table is build in C
+def add_table_methods(table):
+    def join(self, right, on):
+        return join(self, right, on)
+    table.join = join
+    
+    def filters(self, filters):
+        return filters(self, filters)
+    table.filters = filters
+    
+    def groupby(self, by):
+        return Grouper(self, by)
+    table.groupby = groupby
+
+    def drop_duplicates(self, on=[], keep='last'):
+        return drop_duplicates(self, on, keep)
+    table.drop_duplicates = drop_duplicates
+
+    def head(self, n=5):
+        return head(self, n)
+    table.head = head
+    
+

@@ -1,1 +1,1 @@
-from pyarrow_ext.ops import *
+from pyarrow_ops.ops import *
