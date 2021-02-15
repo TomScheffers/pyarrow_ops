@@ -1,5 +1,5 @@
 # Pyarrow ops
-Pyarrow ops is Python libary for data crunching operations directly on the pyarrow.Table class, using only numpy. For convenience, function naming and behavior tries to replicates that of the Pandas API. The performance is currently on par with pandas, however performance can be significantly improved by utilizing pyarrow.compute functions or improving algorithms in numpy.
+Pyarrow ops is Python libary for data crunching operations directly on the pyarrow.Table class, using only numpy. For convenience, function naming and behavior tries to replicates that of the Pandas API. The performance is decent, however performance can be significantly improved by utilizing pyarrow.compute functions or improving algorithms in numpy.
 
 ## Installation
 
@@ -59,7 +59,7 @@ j = join(t, t2, on=['Animal'])
 - [ ] Extend the pq.ParquetDataset with methods
 - [ ] Add more join options (left, right, outer, full, cross)
 
-*One of the main difficulties is that the pyarrow classes are written in C and do not have a __dict__ method, this hinders inheritance, adding classmethods, etc.
+*One of the main difficulties is that the pyarrow classes are written in C and do not have a __dict__ method, this hinders inheritance and adding classmethods.
 
 ## Relation to pyarrow
 In the future many of these functions might be obsolete by enhancements in the pyarrow package, but for now it is a convenient alternative to switching back and forth between pyarrow and pandas.

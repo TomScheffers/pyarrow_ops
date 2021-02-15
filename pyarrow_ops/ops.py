@@ -1,6 +1,7 @@
 import numpy as np
 import pyarrow as pa
 from collections import defaultdict
+import operator, itertools
 
 # Joining functionality
 def join(left, right, on):
@@ -11,23 +12,27 @@ def join(left, right, on):
         t1, t2 = right, left
 
     # Gather on columns
-    idx1, idx2 = list(range(t1.num_rows)), list(range(t1.num_rows))
+    idx1, idx2 = range(t1.num_rows), range(t2.num_rows)
 
     # List of tuples of columns
     on1, on2 = [c.to_numpy() for c in t1.select(on).itercolumns()], [c.to_numpy() for c in t2.select(on).itercolumns()]
 
     # Zip idx / on values
-    tup1, tup2 = list(zip(*[idx1] + on1)), list(zip(*[idx2] + on2))
+    tup1 = map(hash, zip(*on1))
+    tup2 = map(hash, zip(*on2))
+
+    # TODO: Try to sort tup2 and put chunks in ht
 
     # Hash smaller table into dict {(on):[idx1, idx2, ...]}
     ht = defaultdict(list)
-    for r in tup2:
-        ht[r[1:]].append(r[0]) # Save index in hash
-    m = [(r[0], i2) for r in tup1 for i2 in ht[r[1:]]]
+    for i, t in zip(idx2, tup2):
+        ht[t].append(i) # Save index in hash
+    f = operator.itemgetter(*tup1)
+    idx_maps = f(ht)
 
     # Gather indices
-    m1, m2 = zip(*m)
-    l1, l2 = list(m1), list(m2)
+    l1 = [i1 for i1, idx_map in zip(idx1, idx_maps) for i2 in idx_map]
+    l2 = list(itertools.chain.from_iterable(idx_maps))
 
     # Align tables
     fin = t1.take(l1)
@@ -159,13 +164,13 @@ def set_idx(d, key, value, keep):
 
 def drop_duplicates(table, on=[], keep='last'):
     # List of tuples of columns
-    idx = list(range(table.num_rows))
+    idx = range(table.num_rows)
     val = [c.to_numpy() for c in (table.select(on) if on else table).itercolumns()]
-    tup = list(zip(*[idx] + val))
+    tup = map(hash, zip(*val))
 
     # Search distinct indices
     d = {}
-    [set_idx(d, r[1:], r[0], keep) for r in tup]
+    [set_idx(d, t, i, keep) for i, t in zip(idx, tup)]
     return table.take(sorted([i for i in d.values() if i is not None]))
 
 # Show for easier printing
