@@ -1,8 +1,6 @@
 import pyarrow as pa 
 from pyarrow_ops import Table, join, filters, groupby, head, drop_duplicates
 
-# TODO: Pass indices instead of tables in split()
-
 # Create data
 t = pa.Table.from_pydict({
     'Animal': ['Falcon', 'Falcon', 'Parrot', 'Parrot', 'Parrot'],
