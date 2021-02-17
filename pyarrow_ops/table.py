@@ -1,31 +1,35 @@
-import os
+import os, time, s3fs
 import pyarrow as pa
 import pyarrow.parquet as pq
+from ops import drop_duplicates, head, split
 
-class ParquetUniqueDataset():
-    def __init__(self, path, unique_cols=[]):
-        self.path = path
+class ParquetUniqueDataset(pq.ParquetDataset):
+    def __init__(self, *args, **kwargs):
+        self.args, self.kwargs = args, kwargs
+        # super().__init__(*args, **kwargs) 
+        self.path = args[0]
+        self.tables = {}
         self.load()
-        self.unique_cols = [u for u in unique_cols if u not in self.partition_cols]
-
-        if not self.unique_cols:
-            print("Warning: there are no unique columns specified, there is no added value in using this wrapper.")
 
     def load(self, verbose=False):
-        # Loading data as ParquetDataset
-        self.data = pq.ParquetDataset(self.path)
-        self.pieces = self.data.pieces
-        self.metas = [p.get_metadata() for p in self.pieces]
-        self.columns = [c['path_in_schema'] for c in self.metas[0].row_group(0).to_dict()['columns']]
+        # Initiate the parent class
+        super().__init__(*self.args, **self.kwargs) 
+
+        self.meta = self.pieces[0].get_metadata()
+        self.columns = [c['path_in_schema'] for c in self.meta.row_group(0).to_dict()['columns']]
 
         # Partition information
-        self.partition_cols = [c[0] for c in self.data.pieces[0].partition_keys]
-        self.partitions = [p.partition_keys for p in self.pieces]
-        self.partitions_val = [tuple(v[1] for v in p) for p in self.partitions]        
+        self.partition_cols = [c[0] for c in self.pieces[0].partition_keys]
+        self.partitions_ = [p.partition_keys for p in self.pieces]
+        self.partitions_val = [tuple(v[1] for v in p) for p in self.partitions_]      
 
         if verbose:
             print("Loaded all the data:", [p.path for p in self.pieces])
             print("Column names:", self.columns)
+    
+    def set_unique(self, columns):
+        self.unique_cols = [u for u in columns if u not in self.partition_cols]
+        return self
 
     def partition_dict(self, partition_val):
         return dict(zip(self.partition_cols, list(partition_val)))
@@ -37,6 +41,31 @@ class ParquetUniqueDataset():
     def get_idxs(self, partition_val):
         return [idx for idx, p in enumerate(self.partitions_val) if p == partition_val]
 
+    # Cleaning tables
+    def concat(self, tables):
+        return pa.concat_tables([t.select(self.columns) for t in tables])
+
+    def sanitize(self, table):
+        # TODO: Add casting to default schema of class
+        return table.select(self.partition_cols + self.columns)
+
+    def cleanup(self):
+        for p in set(self.partitions_val):
+            print("Cleaning up:", p)
+            table = self.read_parts(p)
+            table_dedup = drop_duplicates(table, on=self.unique_cols, keep='last')
+            self.save(self.deduplicate(table), p)
+
+    # Reading / writing tables
+    def read_parts(self, partition_val=None):
+        # See what pieces we need to load
+        idxs = (self.get_idxs(partition_val) if partition_val else range(len(self.pieces)))
+        for i in idxs:
+            if self.pieces[i].path not in self.tables.keys():
+                print("Reading {} as it is not in cache".format(self.pieces[i].path))
+                self.tables[self.pieces[i].path] = self.pieces[i].read(columns=self.columns, partitions=self.partitions)
+        return self.concat([self.tables[self.pieces[i].path] for i in idxs])
+
     def save(self, table, partition_val):
         paths_old = [self.pieces[i].path for i in self.get_idxs(partition_val)]
         paths_new = [self.get_path(partition_val, 'file0')]
@@ -46,72 +75,82 @@ class ParquetUniqueDataset():
             os.remove(path)
 
         # Write new table
-        print("Writing new table to:", paths_new[0], table.num_rows)
         pq.write_table(table.select(self.columns), paths_new[0])
 
-        # Reload the Dataset if files have changes
+        # Add table to caching
+        self.tables[paths_new[0]] = table
+
+        # Reload the Dataset if file names have changed
         if set(paths_old) != set(paths_new):
+            return True
+        else:
+            return False
+
+    # Upsertion
+    def upsert_part(self, table, partition_val, partition_idxs, keep):
+        # If partition exists, gather original data, before deduplication. Else use new table
+        rows_b4 = None
+        if partition_val in self.partitions_val:
+            table_part = self.read_parts(partition_val)
+            rows_b4 = table_part.num_rows
+            table_new = self.concat([table_part, table.take(partition_idxs)])
+        else:
+            table_new = table.take(partition_idxs)
+        table_dedup = drop_duplicates(table_new, on=self.unique_cols, keep=keep)
+        print("Upserting data for partition {0}. Added {1} unique records".format(partition_val, table_dedup.num_rows - rows_b4))
+        return self.save(table_dedup, partition_val)
+
+    def upsert(self, table, keep='last'):
+        table = self.sanitize(table)
+        # bools = self.pool.map(lambda p: self.upsert_part(*p), [(table, val, idxs, keep) for val, idxs in split(table=table, columns=self.partition_cols)])
+        bools = [self.upsert_part(table, val, idxs, keep) for val, idxs in split(table=table, columns=self.partition_cols)]
+        if max(bools):
+            print("Reloading dataset!")
             self.load()
 
-    def concat(self, tables):
-        return pa.concat_tables([t.select(self.columns) for t in tables])
-
-    def sanitize(self, table):
-        return table.select(self.partition_cols + self.columns)
-
-    def split(self, table):
-        df_part = table.select(self.partition_cols).to_pandas()
-        for key, df_group in df_part.groupby(self.partition_cols):
-            yield (key if isinstance(key, tuple) else (key,)), table.take(df_group.index.values)
-
-    def remove(self, table, values):
-        return
-
-    def deduplicate(self, table):
-        uniq = table.select(self.unique_cols).to_pandas()
-        idxs = uniq.drop_duplicates().index.values
-        return table.take(idxs)
-
-    def read_part(self, partition_val):
-        idxs = self.get_idxs(partition_val)
-        return self.concat([self.pieces[i].read(columns=self.columns, partitions=self.data.partitions) for i in idxs])
-
-    def cleanup(self):
-        for p in set(self.partitions_val):
-            print("Cleaning up:", p)
-            table = self.read_part(p)
-            self.save(self.deduplicate(table), p)
-
-    def read(self, columns=None, use_threads=True, use_pandas_metadata=False):
-        return self.data.read(columns, use_threads, use_pandas_metadata)
-
-    def upsert(self, table):
-        table = self.sanitize(table)
-        for partition_val, table_part in self.split(table):
-            # If partition exists, gather original data, before deduplication
-            if partition_val in self.partitions_val:
-                print("Upserting new data for partition", partition_val)
-                table_part = self.concat([table_part, self.read_part(partition_val)])
-            self.save(self.deduplicate(table_part), partition_val)
+    # Deletion by table
+    def delete_part(self, table, partition_val, partition_idxs):
+        if partition_val in self.partitions_val:
+            table_part = self.read_parts(partition_val)
+            table_new = self.concat([table_part, table.take(partition_idxs)])
+            table_dedup = drop_duplicates(table_new, on=self.unique_cols, keep='drop')
+            print("Removing data for partition {0}. Removed {1} unique records".format(partition_val, table_part.num_rows - table_dedup.num_rows))
+            return self.save(table_dedup, partition_val)
+        else:
+            print("There does not data for partition:", self.partition_dict(partition_val))
+            return False
 
     def delete(self, table):
-        indices = table.select(self.partition_cols + self.unique_cols) 
-        for partition_val, table_part in self.split(table):
-            if partition_val in self.partitions_val:
-                table = self.remove(self.read_part(partition_val), table_part)
-                self.save(table_part, partition_val)
-            else:
-                print("Values already deleted for partition:", self.partition_dict(partition_val))
+        table = self.sanitize(table)
+        # bools = self.pool.map(lambda p: self.delete_part(*p), [(table, val, idxs) for val, idxs in split(table=table, columns=self.partition_cols)])
+        bools = [self.delete_part(table, val, idxs) for val, idxs in split(table=table, columns=self.partition_cols)]
+        if max(bools):
+            self.load()
 
-t = ParquetUniqueDataset('data/skus', unique_cols=['sku_key'])
-#t.cleanup()
-table = t.read()
+    # Delete full partition
+    def delete_predicate(self, partition_val, predicate):
+        return
 
-import numpy as np
-idxs = np.random.choice(table.num_rows, 100_000)
-table_new = table.take(idxs)
 
-t.upsert(table_new)
+if __name__ == '__main__':
+    t = ParquetUniqueDataset('data/skus').set_unique(columns=['sku_key'])
+    table = t.read()
+    head(table)
+
+    # Upsert functionality
+    import numpy as np
+    idxs = np.random.choice(table.num_rows, 100_000)
+    table_new = table.take(idxs)
+
+    t1 = time.time()
+    t.upsert(table_new)
+
+    # Remove functionality
+    t2 = time.time()
+    idxs = np.random.choice(table.num_rows, 100)
+    t.delete(table.take(idxs))
+
+    print("Time upsert / delete", t2 - t1, time.time() - t2)
 
 
 

@@ -25,8 +25,7 @@ def join(left, right, on):
 
     # Hash smaller table into dict {(on):[idx1, idx2, ...]}
     ht = defaultdict(list)
-    for i, t in zip(idx2, tup2):
-        ht[t].append(i) # Save index in hash
+    [ht[t].append(i) for i, t in zip(idx2, tup2)]
     f = operator.itemgetter(*tup1)
     idx_maps = f(ht)
 
@@ -157,8 +156,7 @@ def set_idx(d, key, value, keep):
         if key not in d:
             d[key] = value
     elif keep == 'drop':
-        if key in d:
-            d[key] = None
+        d[key] = (None if key in d.keys() else value)
     else:
         raise Exception("Keep method {} not implemented!".format(keep))
 
@@ -169,9 +167,17 @@ def drop_duplicates(table, on=[], keep='last'):
     tup = map(hash, zip(*val))
 
     # Search distinct indices
-    d = {}
-    [set_idx(d, t, i, keep) for i, t in zip(idx, tup)]
-    return table.take(sorted([i for i in d.values() if i is not None]))
+    ht = defaultdict(list)
+    [ht[t].append(i) for i, t in zip(idx, tup)]
+    
+    # Perform keep logic
+    if keep == 'last':
+        idxs = map(lambda x: x[-1], ht.values())
+    elif keep == 'first':
+        idxs = map(lambda x: x[0], ht.values())
+    elif keep == 'drop':
+        idxs = map(lambda x: x[0], filter(lambda x: len(x) == 1, ht.values()))
+    return table.take(list(idxs))
 
 # Show for easier printing
 def head(table, n=5, max_width=100):
