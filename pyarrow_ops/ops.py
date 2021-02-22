@@ -87,11 +87,6 @@ def split(table, columns, group=(), idx=None):
         idxs = [[] for _ in un]
         [idxs[rev[i]].append(i) for i in range(len(rev))]
         val_idxs = dict(zip(un, idxs))
-    
-    # TODO: Do not take from table, but pass indexes instead. Take in underlying functions
-
-    # Gathering splits of the table, this is the main botteneck for large amounts of categories
-    # tables = {v: table.take(i) for v, i in val_idxs.items()}
 
     if columns[1:]:
         return [s for v, i in val_idxs.items() for s in split(table, columns[1:], group + (v,), idx[i])]
