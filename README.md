@@ -1,6 +1,10 @@
 # Pyarrow ops
 Pyarrow ops is Python libary for data crunching operations directly on the pyarrow.Table class, using only numpy. For convenience, function naming and behavior tries to replicates that of the Pandas API. The performance is decent, however performance can be significantly improved by utilizing pyarrow.compute functions or improving algorithms in numpy.
 
+Current use cases:
+- Data operations like joins, groupby, filters & drop_duplicates
+- Pre-processing for ML applications
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install pyarrow_ops.
@@ -10,8 +14,9 @@ pip install pyarrow_ops
 ```
 
 ## Usage
-See test_func.py for full runnable test example
+See test_*.py for runnable test examples
 
+Data operations:
 ```python
 import pyarrow as pa 
 from pyarrow_ops import join, filters, groupby, head, drop_duplicates
@@ -32,15 +37,10 @@ for key, value in groupby(t, ['Animal']):
     head(value)
 
 # Group by aggregate functions
-g = groupby(t, ['Animal']).median()
 g = groupby(t, ['Animal']).sum()
-g = groupby(t, ['Animal']).min()
 g = groupby(t, ['Animal']).agg({'Max Speed': 'max'})
 
-# Group by window functions
-
 # Use filter predicates using list of tuples (column, operation, value)
-f = filters(t, ('Animal', '=', 'Falcon'))
 f = filters(t, [('Animal', 'not in', ['Falcon', 'Duck']), ('Max Speed', '<', 25)])
 
 # Join operations (currently performs inner join)
@@ -51,8 +51,44 @@ t2 = pa.Table.from_pydict({
 j = join(t, t2, on=['Animal'])
 ```
 
+ML Preprocessing (note: personal tests showed ~5x speed up compared to pandas on large datasets)
+```python
+import pyarrow as pa 
+from pyarrow_ops import head, TableCleaner
+
+# Training data
+t1 = pa.Table.from_pydict({
+    'Animal': ['Falcon', 'Falcon', 'Parrot', 'Parrot', 'Parrot'],
+    'Max Speed': [380., 370., None, 26., 24.],
+    'Value': [2000, 1500, 10, 30, 20],
+})
+
+# Create TableCleaner & register columns to be processed
+cleaner = TableCleaner()
+cleaner.register_numeric('Max Speed', impute='min', clip=True)
+cleaner.register_label('Animal', categories=['Goose', 'Falcon'])
+cleaner.register_one_hot('Animal')
+
+# Clean table and split into train/test
+X, y = cleaner.clean_table(t1, label='Value')
+X_train, X_test, y_train, y_test = cleaner.split(X, y)
+
+# Train a model + Save cleaner settings
+cleaner_dict = cleaner.to_dict()
+
+# Prediction data
+t2 = pa.Table.from_pydict({
+    'Animal': ['Falcon', 'Goose', 'Parrot', 'Parrot'],
+    'Max Speed': [380., 10., None, 26.]
+})
+new_cleaner = TableCleaner().from_dict(cleaner_dict)
+X_pred = new_cleaner.clean_table(t2)
+```
+
 ### To Do's
 - [x] Improve groupby speed by not create copys of table
+- [x] Add ML cleaning class
+- [ ] Add unit tests using pytest
 - [ ] Add window functions on Grouping class
 - [ ] Improve speed of groupby by avoiding for loops
 - [ ] Allow for functions to be classmethods of pa.Table* (t.groupby())

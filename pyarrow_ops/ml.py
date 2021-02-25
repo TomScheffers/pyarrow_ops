@@ -19,10 +19,11 @@ def clean_cat(arr, categories=[]):
 def clean_hot(arr, categories=[], drop_first=False):
     arr = arr.cast(pa.string())
     if categories:
-        return ([c.equal(arr, v).fill_null(False) for v in categories], categories)
+        clns =[c.equal(arr, v).fill_null(False) for v in categories]
     else:
-        un = [u for u in arr.unique().to_pylist() if u]
-        return ([c.equal(arr, v).fill_null(False) for v in un], un)
+        categories = [u for u in arr.unique().to_pylist() if u]
+        clns = [c.equal(arr, v).fill_null(False) for v in categories]
+    return clns[(1 if drop_first else 0):], categories[(1 if drop_first else 0):]
 
 # Cleaning Classes
 class NumericalColumn():
@@ -53,7 +54,7 @@ class NumericalColumn():
         if not self.measured:
             self.update(arr)
         cln, = clean_num(arr, impute=self.value(), clip_min=(self.min if self.clip else None), clip_max=(self.max if self.clip else None))
-        return cln
+        return cln, None
 
 class CategoricalColumn():
     def __init__(self, name, method, categories=[]):
@@ -73,7 +74,7 @@ class CategoricalColumn():
             cln, cats = clean_cat(arr, categories=self.categories)
         if not self.measured:
             self.categories = cats
-        return cln
+        return cln, cats
 
 class TableCleaner():
     def __init__(self):
@@ -102,18 +103,28 @@ class TableCleaner():
 
     def clean_column(self, table, column):
         arr = table.column(column.name).combine_chunks()
-        cln = column.clean(arr)
+        cln, cats = column.clean(arr)
         if column.__dict__.get('method', '') == 'one_hot':
-            return [column.name + '_' + cat for cat in column.categories], cln
+            return [column.name + '_' + cat for cat in cats], cln
         else:
             return [column.name], [cln]
 
-    def clean_table(self, table):
+    def clean_table(self, table, label=None):
         keys, arrays = [], []
         for column in self.columns:
             k, a = self.clean_column(table, column)
             keys.extend(k)
             arrays.extend(a)
-        return pa.Table.from_arrays(arrays, names=keys)
+        if label:
+            return pa.Table.from_arrays(arrays, names=keys), table.column(label)
+        else:
+            return pa.Table.from_arrays(arrays, names=keys)
+
+    def split(self, X, y=None, test_size=0.2):
+        mask = np.random.rand(X.num_rows) > test_size
+        while np.all(mask): # [True, True, True] is invalid
+            mask = np.random.rand(X.num_rows) > test_size
+        idxs, not_idxs = np.where(mask)[0], np.where(~mask)[0]
+        return X.take(idxs), X.take(not_idxs), y.take(idxs), y.take(not_idxs) # X_train, X_test, y_train, y_test
 
     
