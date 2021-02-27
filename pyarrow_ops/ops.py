@@ -3,17 +3,58 @@ import pyarrow as pa
 from collections import defaultdict
 import operator, itertools
 
-# Joining functionality
-def join(left, right, on):
-    # We want the smallest table to be on the right
-    if left.num_rows >= right.num_rows:
-        t1, t2 = left, right
+def column(table, name):
+    return table.column(name).combine_chunks()
+
+# Array to idxs
+def split_array(arr):
+    arr = arr.dictionary_encode()
+    ind, dic = arr.indices.to_numpy(zero_copy_only=False), arr.dictionary.to_numpy(zero_copy_only=False)
+
+    if len(dic) < 1000:
+        # This method is much faster for small amount of categories, but slower for large ones
+        return {v: (ind == i).nonzero()[0] for i, v in enumerate(dic)}
     else:
-        t1, t2 = right, left
+        idxs = [[] for _ in dic]
+        [idxs[v].append(i) for i, v in enumerate(ind)]
+        return dict(zip(dic, idxs))
 
-    # Gather on columns
-    idx1, idx2 = range(t1.num_rows), range(t2.num_rows)
+def value_counter(arr):
+    return {d['values']:d['counts'] for d in arr.value_counts().to_pylist()}
 
+def split_array_v2(arr):
+    dic = arr.dictionary_encode().dictionary.to_numpy(zero_copy_only=False)
+    cnt = value_counter(arr)
+    sort_idxs = pa.compute.sort_indices(arr).to_numpy()
+    idxs, count = {}, 0
+    for d in dic:
+        idxs[d] = sort_idxs[count:count + cnt[d]].tolist()
+        count += cnt[d]
+    return idxs
+
+# Joining functionality
+def align_tables(t1, t2, l1, l2):
+    # Align tables
+    table = t1.take(l1)
+    for c in t2.column_names:
+        if c not in t1.column_names:
+            table = table.append_column(c, t2.column(c).take(l2))
+    return table
+
+def single_key_hash_join(t1, t2, key):
+    # Create idx_maps per distinct value
+    #ht = defaultdict(list, split_array(column(t2, key)))
+    ht = defaultdict(list)
+    [ht[t].append(i) for i, t in enumerate(column(t2, key).to_numpy(zero_copy_only=False))]
+    f = operator.itemgetter(*column(t1, key).to_numpy(zero_copy_only=False))
+    idx_maps = f(ht)
+
+    # Gather indices
+    l1 = [i1 for i1, idx_map in enumerate(idx_maps) for i2 in idx_map]
+    l2 = list(itertools.chain.from_iterable(idx_maps))
+    return align_tables(t1, t2, l1, l2)
+
+def multi_key_hash_join(t1, t2, on):
     # List of tuples of columns
     on1, on2 = [c.to_numpy() for c in t1.select(on).itercolumns()], [c.to_numpy() for c in t2.select(on).itercolumns()]
 
@@ -21,24 +62,29 @@ def join(left, right, on):
     tup1 = map(hash, zip(*on1))
     tup2 = map(hash, zip(*on2))
 
-    # TODO: Try to sort tup2 and put chunks in ht
-
     # Hash smaller table into dict {(on):[idx1, idx2, ...]}
     ht = defaultdict(list)
-    [ht[t].append(i) for i, t in zip(idx2, tup2)]
+    [ht[t].append(i) for i, t in enumerate(tup2)]
     f = operator.itemgetter(*tup1)
     idx_maps = f(ht)
 
     # Gather indices
-    l1 = [i1 for i1, idx_map in zip(idx1, idx_maps) for i2 in idx_map]
+    l1 = [i1 for i1, idx_map in enumerate(idx_maps) for i2 in idx_map]
     l2 = list(itertools.chain.from_iterable(idx_maps))
+    return align_tables(t1, t2, l1, l2)
 
-    # Align tables
-    fin = t1.take(l1)
-    for c in t2.column_names:
-        if c not in t1.column_names:
-            fin = fin.append_column(c, t2.column(c).take(l2))
-    return fin
+def join(left, right, on):
+    # We want the smallest table to be on the right
+    if left.num_rows >= right.num_rows:
+        t1, t2 = left, right
+    else:
+        t1, t2 = right, left
+
+    # Choose join method
+    if len(on) == 1:
+        return single_key_hash_join(t1, t2, on[0])
+    else:
+        return multi_key_hash_join(t1, t2, on)
 
 # Filter functionality
 def arr_op_to_idxs(arr, op, value):
@@ -78,16 +124,7 @@ def split(table, columns, group=(), idx=None):
     # idx keeps track of the orginal table index, getting split recurrently
     if not isinstance(idx, np.ndarray):
         idx = np.arange(table.num_rows)
-    arr = table.column(columns[0]).to_numpy()
-    if np.unique(arr).size < 1000:
-        # This method is much faster for small amount of categories, but slower for large ones
-        val_idxs = {v: (arr == v).nonzero()[0] for v in np.unique(arr)}
-    else:
-        un, rev = np.unique(arr, return_inverse=True)
-        idxs = [[] for _ in un]
-        [idxs[rev[i]].append(i) for i in range(len(rev))]
-        val_idxs = dict(zip(un, idxs))
-
+    val_idxs = split_array(table.column(columns[0]).combine_chunks())
     if columns[1:]:
         return [s for v, i in val_idxs.items() for s in split(table, columns[1:], group + (v,), idx[i])]
     else:

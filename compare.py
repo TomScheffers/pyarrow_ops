@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import pyarrow as pa
-from pyarrow_ops import join, head, drop_duplicates
+from pyarrow_ops import groupby, join, head, drop_duplicates
 
 # Generate ids
 left_size = int(1e4)
@@ -29,6 +29,10 @@ ti = time.time()
 d = drop_duplicates(j)
 print("Pyarrow ops drop_duplicates took:", time.time() - ti)
 
+tg = time.time()
+g = groupby(j, by=['id']).agg({'age_children': 'mean'})
+print("Pyarrow ops groupby took:", time.time() - tg)
+
 # Pandas
 dfl, dfr = l.to_pandas(), r.to_pandas()
 
@@ -39,3 +43,7 @@ print("Pandas merge took:", time.time() - ti)
 ti = time.time()
 dfj = dfj.drop_duplicates()
 print("Pandas drop_duplicates took:", time.time() - ti)
+
+tg = time.time()
+dfg = dfj.groupby(['id']).agg({'age_children': 'mean'})
+print("Pandas groupby took:", time.time() - tg)

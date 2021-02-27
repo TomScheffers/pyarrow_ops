@@ -5,7 +5,7 @@ with open('README.md') as readme_file:
 
 setup_args = dict(
     name='pyarrow_ops',
-    version='0.0.2',
+    version='0.0.4',
     description='Useful data crunching tools for pyarrow',
     long_description_content_type="text/markdown",
     long_description=README,
