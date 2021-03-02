@@ -26,7 +26,7 @@ j = join(l, r, on=['id'])
 print("Pyarrow ops join took:", time.time() - ti)
 
 ti = time.time()
-d = drop_duplicates(j)
+d = drop_duplicates(j, on=['id'])
 print("Pyarrow ops drop_duplicates took:", time.time() - ti)
 
 tg = time.time()
@@ -41,7 +41,7 @@ dfj = dfl.merge(dfr, how='left', left_on='id', right_on='id')
 print("Pandas merge took:", time.time() - ti)
 
 ti = time.time()
-dfj = dfj.drop_duplicates()
+dfj = dfj.drop_duplicates(subset=['id'])
 print("Pandas drop_duplicates took:", time.time() - ti)
 
 tg = time.time()

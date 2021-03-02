@@ -1,4 +1,6 @@
 from setuptools import setup, find_packages
+import numpy as np
+from Cython.Build import cythonize
 
 with open('README.md') as readme_file:
     README = readme_file.read()
@@ -24,4 +26,9 @@ install_requires = [
 ]
 
 if __name__ == '__main__':
-    setup(**setup_args, install_requires=install_requires)
+    setup(
+        **setup_args, 
+        install_requires=install_requires,
+        ext_modules=cythonize(["pyarrow_ops/cjoin.pyx"]),
+        include_dirs=np.get_include()
+    )

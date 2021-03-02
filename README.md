@@ -1,9 +1,9 @@
 # Pyarrow ops
-Pyarrow ops is Python libary for data crunching operations directly on the pyarrow.Table class, using only numpy. For convenience, function naming and behavior tries to replicates that of the Pandas API. The performance is decent, however performance can be significantly improved by utilizing pyarrow.compute functions or improving algorithms in numpy.
+Pyarrow ops is Python libary for data crunching operations directly on the pyarrow.Table class, implemented in numpy & Cython. For convenience, function naming and behavior tries to replicates that of the Pandas API. The Join / Groupy performance is slightly slower than that of pandas, especially on multi column joins.
 
 Current use cases:
-- Data operations like joins, groupby, filters & drop_duplicates
-- Pre-processing for ML applications
+- Data operations like joins, groupby (aggregations), filters & drop_duplicates
+- (Very fast) reusable pre-processing for ML applications
 
 ## Installation
 
@@ -88,12 +88,12 @@ X_pred = new_cleaner.clean_table(t2)
 ### To Do's
 - [x] Improve groupby speed by not create copys of table
 - [x] Add ML cleaning class
+- [x] Improve speed of groupby by avoiding for loops
+- [x] Improve join speed by moving code to C
 - [ ] Add unit tests using pytest
-- [ ] Add window functions on Grouping class
-- [ ] Improve speed of groupby by avoiding for loops
-- [ ] Allow for functions to be classmethods of pa.Table* (t.groupby())
-- [ ] Extend the pq.ParquetDataset with methods
+- [ ] Add window functions on groupby
 - [ ] Add more join options (left, right, outer, full, cross)
+- [ ] Allow for functions to be classmethods of pa.Table* (t.groupby(...))
 
 *One of the main difficulties is that the pyarrow classes are written in C and do not have a __dict__ method, this hinders inheritance and adding classmethods.
 

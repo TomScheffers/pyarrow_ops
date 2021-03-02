@@ -1,5 +1,5 @@
 import pyarrow as pa 
-from pyarrow_ops import Table, join, filters, groupby, head, drop_duplicates
+from pyarrow_ops import join, filters, groupby, head, drop_duplicates
 
 # Create data
 t = pa.Table.from_pydict({
