@@ -1,14 +1,35 @@
-from setuptools import find_packages
-from distutils.core import setup, Extension
+from setuptools import setup, find_packages
+from setuptools import Extension
+from distutils.command.build import build as build_orig
 import numpy as np
-from Cython.Build import cythonize
+
+__version__ = "0.0.7"
+
+extensions = [
+    Extension(
+        name="cjoin", 
+        sources=["pyarrow_ops/cjoin.c"], 
+        include_dirs=[np.get_include()]
+    )
+]
 
 with open('README.md') as readme_file:
     README = readme_file.read()
 
-setup_args = dict(
+class build(build_orig):
+    def finalize_options(self):
+        super().finalize_options()
+        #__builtins__.__NUMPY_SETUP__ = False
+        import numpy
+        for extension in self.distribution.ext_modules:
+            extension.include_dirs.append(numpy.get_include())
+        from Cython.Build import cythonize
+        self.distribution.ext_modules = cythonize(self.distribution.ext_modules,
+                                                  language_level=3)
+
+setup(
     name='pyarrow_ops',
-    version='0.0.6',
+    version='0.0.7',
     description='Useful data crunching tools for pyarrow',
     long_description_content_type="text/markdown",
     long_description=README,
@@ -18,23 +39,13 @@ setup_args = dict(
     author_email='tom@youngbulls.nl ',
     keywords=['arrow', 'pyarrow', 'data'],
     url='https://github.com/TomScheffers/pyarrow_ops',
-    download_url='https://pypi.org/project/pyarrow-ops/'
+    download_url='https://pypi.org/project/pyarrow-ops/',
+    include_package_data=True,
+    ext_modules=extensions,
+    install_requires=["numpy", "pyarrow"],
+    zip_safe=False,
+    
+    # setup_requires=["numpy"],
+    # package_data={"pyarrow_ops": ["pyarrow_ops/cjoin.pyx"]},
+    # cmdclass={"build": build},
 )
-
-install_requires = [
-    'pyarrow>=3.0.0',
-    'numpy>=1.16.6'
-]
-
-if __name__ == '__main__':
-    print(np.get_include())
-
-    extensions = [
-        Extension("cjoin", ["pyarrow_ops/cjoin.pyx"], include_dirs=[np.get_include()])
-    ]
-    setup(
-        **setup_args, 
-        install_requires=install_requires,
-        ext_modules=cythonize(extensions),
-        include_dirs=np.get_include()
-    )

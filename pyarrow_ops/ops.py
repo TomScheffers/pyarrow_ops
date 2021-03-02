@@ -33,7 +33,7 @@ def filters(table, filters):
         arr = table.column(col).to_numpy()
         f_idxs = arr_op_to_idxs(arr[idxs], op, value)
         idxs = idxs[f_idxs]
-    return table.take(idxs)
+    return table.take(idxs.tolist())
 
 # Drop duplicates
 def drop_duplicates(table, on=[], keep='first'):
