@@ -21,4 +21,3 @@ def columns_to_array(table, columns):
     else:
         values = [c.to_numpy() for c in table.select(columns).itercolumns()]
         return np.array(list(map(hash, zip(*values))))
-

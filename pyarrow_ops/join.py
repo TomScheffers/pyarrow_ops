@@ -2,7 +2,7 @@ import time
 import numpy as np
 import pyarrow as pa
 from pyarrow_ops.helpers import columns_to_array, groupify_array
-from pyarrow_ops.cjoin import inner_join
+from cjoin import inner_join
 
 def align_tables(t1, t2, l1, l2):
     # Align tables

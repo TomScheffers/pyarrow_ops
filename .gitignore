@@ -3,6 +3,7 @@
 data/
 logs/
 dev/
+numpy/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
