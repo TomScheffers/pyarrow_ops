@@ -4,6 +4,12 @@ from pyarrow_ops.helpers import columns_to_array, groupify_array
 
 # Filter functionality
 def arr_op_to_idxs(arr, op, value):
+    # Cast value to type arr
+    try:
+        value = np.array(value, dtype=arr.dtype)
+    except:
+        raise Exception("Cannot downcast {} to data type {}".format(value, arr.dtype))
+
     if op in ['=', '==']:
         return np.where(arr == value)
     elif op == '!=':
@@ -33,7 +39,7 @@ def filters(table, filters):
         arr = table.column(col).to_numpy()
         f_idxs = arr_op_to_idxs(arr[idxs], op, value)
         idxs = idxs[f_idxs]
-    return table.take(idxs.tolist())
+    return table.take(idxs)
 
 # Drop duplicates
 def drop_duplicates(table, on=[], keep='first'):

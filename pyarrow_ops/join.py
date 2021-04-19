@@ -14,16 +14,20 @@ def align_tables(t1, t2, l1, l2):
 
 def join(left, right, on):
     # Gather join columns
+    t0 = time.time()
     l_arr, r_arr = columns_to_array(left, on), columns_to_array(right, on)
 
     # Groupify the join array
+    t1 = time.time()
     ld, lc, lidxs, lbi = groupify_array(l_arr)
     rd, rc, ridxs, rbi = groupify_array(r_arr)
 
     # Find both dicts
+    t2 = time.time()
     bd, inv = np.unique(np.concatenate([ld, rd]), return_inverse=True)
     
     # Align Left side
+    t3 = time.time()
     linv = inv[:ld.shape[0]]
     lcc, lbic = np.zeros_like(bd), np.zeros_like(bd)
     lcc[linv] = lc
@@ -36,7 +40,10 @@ def join(left, right, on):
     rbic[rinv] = rbi
 
     # Perform cjoin
+    t4 = time.time()
     left_align, right_align = inner_join(lidxs.astype(np.int64), ridxs.astype(np.int64), lcc.astype(np.int64), rcc.astype(np.int64), lbic.astype(np.int64), rbic.astype(np.int64))   
+    
+    # print("Join took:", time.time() - t4, t4 - t3 , t2 - t1, t1 - t0)
     return align_tables(left, right, left_align, right_align)
 
 # Old Code:
