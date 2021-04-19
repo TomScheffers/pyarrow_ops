@@ -3,13 +3,22 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [],
-        "name": "pyarrow_ops.cjoin",
+        "depends": [
+            "/Users/tom/Documents/Projects/pyarrow/env/lib/python3.8/site-packages/numpy/core/include/numpy/arrayobject.h",
+            "/Users/tom/Documents/Projects/pyarrow/env/lib/python3.8/site-packages/numpy/core/include/numpy/arrayscalars.h",
+            "/Users/tom/Documents/Projects/pyarrow/env/lib/python3.8/site-packages/numpy/core/include/numpy/ndarrayobject.h",
+            "/Users/tom/Documents/Projects/pyarrow/env/lib/python3.8/site-packages/numpy/core/include/numpy/ndarraytypes.h",
+            "/Users/tom/Documents/Projects/pyarrow/env/lib/python3.8/site-packages/numpy/core/include/numpy/ufuncobject.h"
+        ],
+        "include_dirs": [
+            "/Users/tom/Documents/Projects/pyarrow/env/lib/python3.8/site-packages/numpy/core/include"
+        ],
+        "name": "cjoin",
         "sources": [
             "pyarrow_ops/cjoin.pyx"
         ]
     },
-    "module_name": "pyarrow_ops.cjoin"
+    "module_name": "cjoin"
 }
 END: Cython Metadata */
 
@@ -615,8 +624,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__pyarrow_ops__cjoin
-#define __PYX_HAVE_API__pyarrow_ops__cjoin
+#define __PYX_HAVE__cjoin
+#define __PYX_HAVE_API__cjoin
 /* Early includes */
 #include <string.h>
 #include <stdio.h>
@@ -2147,7 +2156,7 @@ static PyTypeObject *__pyx_ptype_5numpy_character = 0;
 static PyTypeObject *__pyx_ptype_5numpy_ufunc = 0;
 static CYTHON_INLINE int __pyx_f_5numpy_import_array(void); /*proto*/
 
-/* Module declarations from 'pyarrow_ops.cjoin' */
+/* Module declarations from 'cjoin' */
 static PyTypeObject *__pyx_array_type = 0;
 static PyTypeObject *__pyx_MemviewEnum_type = 0;
 static PyTypeObject *__pyx_memoryview_type = 0;
@@ -2194,11 +2203,11 @@ static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize
 static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, PyObject *); /*proto*/
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_int64_t = { "int64_t", NULL, sizeof(__pyx_t_5numpy_int64_t), { 0 }, 0, IS_UNSIGNED(__pyx_t_5numpy_int64_t) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_5numpy_int64_t), 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_int64_t__const__ = { "const int64_t", NULL, sizeof(__pyx_t_5numpy_int64_t const ), { 0 }, 0, IS_UNSIGNED(__pyx_t_5numpy_int64_t const ) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_5numpy_int64_t const ), 0 };
-#define __Pyx_MODULE_NAME "pyarrow_ops.cjoin"
-extern int __pyx_module_is_main_pyarrow_ops__cjoin;
-int __pyx_module_is_main_pyarrow_ops__cjoin = 0;
+#define __Pyx_MODULE_NAME "cjoin"
+extern int __pyx_module_is_main_cjoin;
+int __pyx_module_is_main_cjoin = 0;
 
-/* Implementation of 'pyarrow_ops.cjoin' */
+/* Implementation of 'cjoin' */
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_ImportError;
 static PyObject *__pyx_builtin_ValueError;
@@ -2238,6 +2247,7 @@ static const char __pyx_k_step[] = "step";
 static const char __pyx_k_stop[] = "stop";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_ASCII[] = "ASCII";
+static const char __pyx_k_cjoin[] = "cjoin";
 static const char __pyx_k_class[] = "__class__";
 static const char __pyx_k_dtype[] = "dtype";
 static const char __pyx_k_empty[] = "empty";
@@ -2293,7 +2303,6 @@ static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
-static const char __pyx_k_pyarrow_ops_cjoin[] = "pyarrow_ops.cjoin";
 static const char __pyx_k_pyx_unpickle_Enum[] = "__pyx_unpickle_Enum";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
@@ -2352,6 +2361,7 @@ static PyObject *__pyx_n_s_base;
 static PyObject *__pyx_n_s_c;
 static PyObject *__pyx_n_u_c;
 static PyObject *__pyx_n_s_cats;
+static PyObject *__pyx_n_s_cjoin;
 static PyObject *__pyx_n_s_class;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_kp_s_contiguous_and_direct;
@@ -2400,7 +2410,6 @@ static PyObject *__pyx_n_s_obj;
 static PyObject *__pyx_n_s_p;
 static PyObject *__pyx_n_s_pack;
 static PyObject *__pyx_n_s_pickle;
-static PyObject *__pyx_n_s_pyarrow_ops_cjoin;
 static PyObject *__pyx_kp_s_pyarrow_ops_cjoin_pyx;
 static PyObject *__pyx_n_s_pyx_PickleError;
 static PyObject *__pyx_n_s_pyx_checksum;
@@ -2440,7 +2449,7 @@ static PyObject *__pyx_kp_s_unable_to_allocate_array_data;
 static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
 static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
-static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_left_idxs, __Pyx_memviewslice __pyx_v_right_idxs, __Pyx_memviewslice __pyx_v_left_counts, __Pyx_memviewslice __pyx_v_right_counts, __Pyx_memviewslice __pyx_v_left_bidxs, __Pyx_memviewslice __pyx_v_right_bidxs); /* proto */
+static PyObject *__pyx_pf_5cjoin_inner_join(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_left_idxs, __Pyx_memviewslice __pyx_v_right_idxs, __Pyx_memviewslice __pyx_v_left_counts, __Pyx_memviewslice __pyx_v_right_counts, __Pyx_memviewslice __pyx_v_left_bidxs, __Pyx_memviewslice __pyx_v_right_bidxs); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -2522,7 +2531,7 @@ static PyObject *__pyx_codeobj__22;
 static PyObject *__pyx_codeobj__29;
 /* Late includes */
 
-/* "pyarrow_ops/cjoin.pyx":10
+/* "cjoin.pyx":10
  * 
  * @cython.boundscheck(False)
  * def inner_join(             # <<<<<<<<<<<<<<
@@ -2531,9 +2540,9 @@ static PyObject *__pyx_codeobj__29;
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_11pyarrow_ops_5cjoin_1inner_join(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_11pyarrow_ops_5cjoin_1inner_join = {"inner_join", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_11pyarrow_ops_5cjoin_1inner_join, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_11pyarrow_ops_5cjoin_1inner_join(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5cjoin_1inner_join(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_5cjoin_1inner_join = {"inner_join", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_5cjoin_1inner_join, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5cjoin_1inner_join(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_left_idxs = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_right_idxs = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_left_counts = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -2628,18 +2637,18 @@ static PyObject *__pyx_pw_11pyarrow_ops_5cjoin_1inner_join(PyObject *__pyx_self,
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("inner_join", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 10, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("pyarrow_ops.cjoin.inner_join", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("cjoin.inner_join", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_11pyarrow_ops_5cjoin_inner_join(__pyx_self, __pyx_v_left_idxs, __pyx_v_right_idxs, __pyx_v_left_counts, __pyx_v_right_counts, __pyx_v_left_bidxs, __pyx_v_right_bidxs);
+  __pyx_r = __pyx_pf_5cjoin_inner_join(__pyx_self, __pyx_v_left_idxs, __pyx_v_right_idxs, __pyx_v_left_counts, __pyx_v_right_counts, __pyx_v_left_bidxs, __pyx_v_right_bidxs);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_left_idxs, __Pyx_memviewslice __pyx_v_right_idxs, __Pyx_memviewslice __pyx_v_left_counts, __Pyx_memviewslice __pyx_v_right_counts, __Pyx_memviewslice __pyx_v_left_bidxs, __Pyx_memviewslice __pyx_v_right_bidxs) {
+static PyObject *__pyx_pf_5cjoin_inner_join(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_left_idxs, __Pyx_memviewslice __pyx_v_right_idxs, __Pyx_memviewslice __pyx_v_left_counts, __Pyx_memviewslice __pyx_v_right_counts, __Pyx_memviewslice __pyx_v_left_bidxs, __Pyx_memviewslice __pyx_v_right_bidxs) {
   Py_ssize_t __pyx_v_i;
   CYTHON_UNUSED Py_ssize_t __pyx_v_li;
   CYTHON_UNUSED Py_ssize_t __pyx_v_ri;
@@ -2697,7 +2706,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
   __pyx_pybuffernd_right_align.data = NULL;
   __pyx_pybuffernd_right_align.rcbuffer = &__pyx_pybuffer_right_align;
 
-  /* "pyarrow_ops/cjoin.pyx":15
+  /* "cjoin.pyx":15
  *         const int64_t[:] left_bidxs, const int64_t[:] right_bidxs):
  *     cdef:
  *         Py_ssize_t i, li, ri, rows = 0, p = 0             # <<<<<<<<<<<<<<
@@ -2707,7 +2716,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
   __pyx_v_rows = 0;
   __pyx_v_p = 0;
 
-  /* "pyarrow_ops/cjoin.pyx":19
+  /* "cjoin.pyx":19
  *         ndarray[int64_t] left_align, right_align
  * 
  *     cats = left_counts.shape[0]             # <<<<<<<<<<<<<<
@@ -2716,7 +2725,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
  */
   __pyx_v_cats = (__pyx_v_left_counts.shape[0]);
 
-  /* "pyarrow_ops/cjoin.pyx":20
+  /* "cjoin.pyx":20
  * 
  *     cats = left_counts.shape[0]
  *     with nogil:             # <<<<<<<<<<<<<<
@@ -2731,7 +2740,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
       #endif
       /*try:*/ {
 
-        /* "pyarrow_ops/cjoin.pyx":21
+        /* "cjoin.pyx":21
  *     cats = left_counts.shape[0]
  *     with nogil:
  *         for i in range(cats):             # <<<<<<<<<<<<<<
@@ -2743,7 +2752,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
         for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
           __pyx_v_i = __pyx_t_3;
 
-          /* "pyarrow_ops/cjoin.pyx":22
+          /* "cjoin.pyx":22
  *     with nogil:
  *         for i in range(cats):
  *             lc = left_counts[i]             # <<<<<<<<<<<<<<
@@ -2754,7 +2763,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
           if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_left_counts.shape[0];
           __pyx_v_lc = (*((__pyx_t_5numpy_int64_t const  *) ( /* dim=0 */ (__pyx_v_left_counts.data + __pyx_t_4 * __pyx_v_left_counts.strides[0]) )));
 
-          /* "pyarrow_ops/cjoin.pyx":23
+          /* "cjoin.pyx":23
  *         for i in range(cats):
  *             lc = left_counts[i]
  *             rc = right_counts[i]             # <<<<<<<<<<<<<<
@@ -2765,7 +2774,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
           if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_right_counts.shape[0];
           __pyx_v_rc = (*((__pyx_t_5numpy_int64_t const  *) ( /* dim=0 */ (__pyx_v_right_counts.data + __pyx_t_4 * __pyx_v_right_counts.strides[0]) )));
 
-          /* "pyarrow_ops/cjoin.pyx":24
+          /* "cjoin.pyx":24
  *             lc = left_counts[i]
  *             rc = right_counts[i]
  *             rows += lc * rc             # <<<<<<<<<<<<<<
@@ -2776,7 +2785,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
         }
       }
 
-      /* "pyarrow_ops/cjoin.pyx":20
+      /* "cjoin.pyx":20
  * 
  *     cats = left_counts.shape[0]
  *     with nogil:             # <<<<<<<<<<<<<<
@@ -2795,7 +2804,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
       }
   }
 
-  /* "pyarrow_ops/cjoin.pyx":26
+  /* "cjoin.pyx":26
  *             rows += lc * rc
  * 
  *     left_align, right_align = np.empty(rows, dtype=np.int64), np.empty(rows, dtype=np.int64)             # <<<<<<<<<<<<<<
@@ -2899,7 +2908,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
   __pyx_v_right_align = ((PyArrayObject *)__pyx_t_10);
   __pyx_t_10 = 0;
 
-  /* "pyarrow_ops/cjoin.pyx":28
+  /* "cjoin.pyx":28
  *     left_align, right_align = np.empty(rows, dtype=np.int64), np.empty(rows, dtype=np.int64)
  * 
  *     with nogil:             # <<<<<<<<<<<<<<
@@ -2914,7 +2923,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
       #endif
       /*try:*/ {
 
-        /* "pyarrow_ops/cjoin.pyx":29
+        /* "cjoin.pyx":29
  * 
  *     with nogil:
  *         for i in range(cats):             # <<<<<<<<<<<<<<
@@ -2926,7 +2935,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
         for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
           __pyx_v_i = __pyx_t_3;
 
-          /* "pyarrow_ops/cjoin.pyx":30
+          /* "cjoin.pyx":30
  *     with nogil:
  *         for i in range(cats):
  *             lc = left_counts[i]             # <<<<<<<<<<<<<<
@@ -2937,7 +2946,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
           if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_left_counts.shape[0];
           __pyx_v_lc = (*((__pyx_t_5numpy_int64_t const  *) ( /* dim=0 */ (__pyx_v_left_counts.data + __pyx_t_4 * __pyx_v_left_counts.strides[0]) )));
 
-          /* "pyarrow_ops/cjoin.pyx":31
+          /* "cjoin.pyx":31
  *         for i in range(cats):
  *             lc = left_counts[i]
  *             rc = right_counts[i]             # <<<<<<<<<<<<<<
@@ -2948,7 +2957,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
           if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_right_counts.shape[0];
           __pyx_v_rc = (*((__pyx_t_5numpy_int64_t const  *) ( /* dim=0 */ (__pyx_v_right_counts.data + __pyx_t_4 * __pyx_v_right_counts.strides[0]) )));
 
-          /* "pyarrow_ops/cjoin.pyx":32
+          /* "cjoin.pyx":32
  *             lc = left_counts[i]
  *             rc = right_counts[i]
  *             if lc > 0 and rc > 0:             # <<<<<<<<<<<<<<
@@ -2966,7 +2975,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
           __pyx_L14_bool_binop_done:;
           if (__pyx_t_16) {
 
-            /* "pyarrow_ops/cjoin.pyx":33
+            /* "cjoin.pyx":33
  *             rc = right_counts[i]
  *             if lc > 0 and rc > 0:
  *                 lbi = left_bidxs[i]             # <<<<<<<<<<<<<<
@@ -2977,7 +2986,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
             if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_left_bidxs.shape[0];
             __pyx_v_lbi = (*((__pyx_t_5numpy_int64_t const  *) ( /* dim=0 */ (__pyx_v_left_bidxs.data + __pyx_t_4 * __pyx_v_left_bidxs.strides[0]) )));
 
-            /* "pyarrow_ops/cjoin.pyx":34
+            /* "cjoin.pyx":34
  *             if lc > 0 and rc > 0:
  *                 lbi = left_bidxs[i]
  *                 for li in range(lc):             # <<<<<<<<<<<<<<
@@ -2989,7 +2998,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
             for (__pyx_t_20 = 0; __pyx_t_20 < __pyx_t_19; __pyx_t_20+=1) {
               __pyx_v_li = __pyx_t_20;
 
-              /* "pyarrow_ops/cjoin.pyx":35
+              /* "cjoin.pyx":35
  *                 lbi = left_bidxs[i]
  *                 for li in range(lc):
  *                     rbi = right_bidxs[i]             # <<<<<<<<<<<<<<
@@ -3000,7 +3009,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
               if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_right_bidxs.shape[0];
               __pyx_v_rbi = (*((__pyx_t_5numpy_int64_t const  *) ( /* dim=0 */ (__pyx_v_right_bidxs.data + __pyx_t_4 * __pyx_v_right_bidxs.strides[0]) )));
 
-              /* "pyarrow_ops/cjoin.pyx":36
+              /* "cjoin.pyx":36
  *                 for li in range(lc):
  *                     rbi = right_bidxs[i]
  *                     for ri in range(rc):             # <<<<<<<<<<<<<<
@@ -3012,7 +3021,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
               for (__pyx_t_23 = 0; __pyx_t_23 < __pyx_t_22; __pyx_t_23+=1) {
                 __pyx_v_ri = __pyx_t_23;
 
-                /* "pyarrow_ops/cjoin.pyx":37
+                /* "cjoin.pyx":37
  *                     rbi = right_bidxs[i]
  *                     for ri in range(rc):
  *                         lp = left_idxs[lbi]             # <<<<<<<<<<<<<<
@@ -3023,7 +3032,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
                 if (__pyx_t_24 < 0) __pyx_t_24 += __pyx_v_left_idxs.shape[0];
                 __pyx_v_lp = (*((__pyx_t_5numpy_int64_t const  *) ( /* dim=0 */ (__pyx_v_left_idxs.data + __pyx_t_24 * __pyx_v_left_idxs.strides[0]) )));
 
-                /* "pyarrow_ops/cjoin.pyx":38
+                /* "cjoin.pyx":38
  *                     for ri in range(rc):
  *                         lp = left_idxs[lbi]
  *                         rp = right_idxs[rbi]             # <<<<<<<<<<<<<<
@@ -3034,7 +3043,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
                 if (__pyx_t_24 < 0) __pyx_t_24 += __pyx_v_right_idxs.shape[0];
                 __pyx_v_rp = (*((__pyx_t_5numpy_int64_t const  *) ( /* dim=0 */ (__pyx_v_right_idxs.data + __pyx_t_24 * __pyx_v_right_idxs.strides[0]) )));
 
-                /* "pyarrow_ops/cjoin.pyx":39
+                /* "cjoin.pyx":39
  *                         lp = left_idxs[lbi]
  *                         rp = right_idxs[rbi]
  *                         left_align[p] = lp             # <<<<<<<<<<<<<<
@@ -3045,7 +3054,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
                 if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_pybuffernd_left_align.diminfo[0].shape;
                 *__Pyx_BufPtrStrided1d(__pyx_t_5numpy_int64_t *, __pyx_pybuffernd_left_align.rcbuffer->pybuffer.buf, __pyx_t_4, __pyx_pybuffernd_left_align.diminfo[0].strides) = __pyx_v_lp;
 
-                /* "pyarrow_ops/cjoin.pyx":40
+                /* "cjoin.pyx":40
  *                         rp = right_idxs[rbi]
  *                         left_align[p] = lp
  *                         right_align[p] = rp             # <<<<<<<<<<<<<<
@@ -3056,7 +3065,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
                 if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_pybuffernd_right_align.diminfo[0].shape;
                 *__Pyx_BufPtrStrided1d(__pyx_t_5numpy_int64_t *, __pyx_pybuffernd_right_align.rcbuffer->pybuffer.buf, __pyx_t_4, __pyx_pybuffernd_right_align.diminfo[0].strides) = __pyx_v_rp;
 
-                /* "pyarrow_ops/cjoin.pyx":41
+                /* "cjoin.pyx":41
  *                         left_align[p] = lp
  *                         right_align[p] = rp
  *                         rbi += 1             # <<<<<<<<<<<<<<
@@ -3065,7 +3074,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
  */
                 __pyx_v_rbi = (__pyx_v_rbi + 1);
 
-                /* "pyarrow_ops/cjoin.pyx":42
+                /* "cjoin.pyx":42
  *                         right_align[p] = rp
  *                         rbi += 1
  *                         p += 1             # <<<<<<<<<<<<<<
@@ -3075,7 +3084,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
                 __pyx_v_p = (__pyx_v_p + 1);
               }
 
-              /* "pyarrow_ops/cjoin.pyx":43
+              /* "cjoin.pyx":43
  *                         rbi += 1
  *                         p += 1
  *                     lbi += 1             # <<<<<<<<<<<<<<
@@ -3085,7 +3094,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
               __pyx_v_lbi = (__pyx_v_lbi + 1);
             }
 
-            /* "pyarrow_ops/cjoin.pyx":32
+            /* "cjoin.pyx":32
  *             lc = left_counts[i]
  *             rc = right_counts[i]
  *             if lc > 0 and rc > 0:             # <<<<<<<<<<<<<<
@@ -3096,7 +3105,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
         }
       }
 
-      /* "pyarrow_ops/cjoin.pyx":28
+      /* "cjoin.pyx":28
  *     left_align, right_align = np.empty(rows, dtype=np.int64), np.empty(rows, dtype=np.int64)
  * 
  *     with nogil:             # <<<<<<<<<<<<<<
@@ -3115,7 +3124,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
       }
   }
 
-  /* "pyarrow_ops/cjoin.pyx":44
+  /* "cjoin.pyx":44
  *                         p += 1
  *                     lbi += 1
  *     return left_align, right_align             # <<<<<<<<<<<<<<
@@ -3135,7 +3144,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
   __pyx_t_10 = 0;
   goto __pyx_L0;
 
-  /* "pyarrow_ops/cjoin.pyx":10
+  /* "cjoin.pyx":10
  * 
  * @cython.boundscheck(False)
  * def inner_join(             # <<<<<<<<<<<<<<
@@ -3158,7 +3167,7 @@ static PyObject *__pyx_pf_11pyarrow_ops_5cjoin_inner_join(CYTHON_UNUSED PyObject
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_left_align.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_right_align.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("pyarrow_ops.cjoin.inner_join", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("cjoin.inner_join", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -17335,7 +17344,7 @@ static PyBufferProcs __pyx_tp_as_buffer_array = {
 
 static PyTypeObject __pyx_type___pyx_array = {
   PyVarObject_HEAD_INIT(0, 0)
-  "pyarrow_ops.cjoin.array", /*tp_name*/
+  "cjoin.array", /*tp_name*/
   sizeof(struct __pyx_array_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_array, /*tp_dealloc*/
@@ -17454,7 +17463,7 @@ static PyMethodDef __pyx_methods_Enum[] = {
 
 static PyTypeObject __pyx_type___pyx_MemviewEnum = {
   PyVarObject_HEAD_INIT(0, 0)
-  "pyarrow_ops.cjoin.Enum", /*tp_name*/
+  "cjoin.Enum", /*tp_name*/
   sizeof(struct __pyx_MemviewEnum_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_Enum, /*tp_dealloc*/
@@ -17715,7 +17724,7 @@ static PyBufferProcs __pyx_tp_as_buffer_memoryview = {
 
 static PyTypeObject __pyx_type___pyx_memoryview = {
   PyVarObject_HEAD_INIT(0, 0)
-  "pyarrow_ops.cjoin.memoryview", /*tp_name*/
+  "cjoin.memoryview", /*tp_name*/
   sizeof(struct __pyx_memoryview_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_memoryview, /*tp_dealloc*/
@@ -17853,7 +17862,7 @@ static struct PyGetSetDef __pyx_getsets__memoryviewslice[] = {
 
 static PyTypeObject __pyx_type___pyx_memoryviewslice = {
   PyVarObject_HEAD_INIT(0, 0)
-  "pyarrow_ops.cjoin._memoryviewslice", /*tp_name*/
+  "cjoin._memoryviewslice", /*tp_name*/
   sizeof(struct __pyx_memoryviewslice_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc__memoryviewslice, /*tp_dealloc*/
@@ -18003,6 +18012,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
   {&__pyx_n_u_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 1, 0, 1},
   {&__pyx_n_s_cats, __pyx_k_cats, sizeof(__pyx_k_cats), 0, 0, 1, 1},
+  {&__pyx_n_s_cjoin, __pyx_k_cjoin, sizeof(__pyx_k_cjoin), 0, 0, 1, 1},
   {&__pyx_n_s_class, __pyx_k_class, sizeof(__pyx_k_class), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_kp_s_contiguous_and_direct, __pyx_k_contiguous_and_direct, sizeof(__pyx_k_contiguous_and_direct), 0, 0, 1, 0},
@@ -18051,7 +18061,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_p, __pyx_k_p, sizeof(__pyx_k_p), 0, 0, 1, 1},
   {&__pyx_n_s_pack, __pyx_k_pack, sizeof(__pyx_k_pack), 0, 0, 1, 1},
   {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
-  {&__pyx_n_s_pyarrow_ops_cjoin, __pyx_k_pyarrow_ops_cjoin, sizeof(__pyx_k_pyarrow_ops_cjoin), 0, 0, 1, 1},
   {&__pyx_kp_s_pyarrow_ops_cjoin_pyx, __pyx_k_pyarrow_ops_cjoin_pyx, sizeof(__pyx_k_pyarrow_ops_cjoin_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_pyx_PickleError, __pyx_k_pyx_PickleError, sizeof(__pyx_k_pyx_PickleError), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_checksum, __pyx_k_pyx_checksum, sizeof(__pyx_k_pyx_checksum), 0, 0, 1, 1},
@@ -18326,7 +18335,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
 
-  /* "pyarrow_ops/cjoin.pyx":10
+  /* "cjoin.pyx":10
  * 
  * @cython.boundscheck(False)
  * def inner_join(             # <<<<<<<<<<<<<<
@@ -18774,14 +18783,14 @@ if (!__Pyx_RefNanny) {
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_pyarrow_ops__cjoin) {
+  if (__pyx_module_is_main_cjoin) {
     if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name_2, __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "pyarrow_ops.cjoin")) {
-      if (unlikely(PyDict_SetItemString(modules, "pyarrow_ops.cjoin", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "cjoin")) {
+      if (unlikely(PyDict_SetItemString(modules, "cjoin", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -18802,7 +18811,7 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "pyarrow_ops/cjoin.pyx":3
+  /* "cjoin.pyx":3
  * import cython
  * from cython import Py_ssize_t
  * import numpy as np             # <<<<<<<<<<<<<<
@@ -18814,7 +18823,7 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyarrow_ops/cjoin.pyx":7
+  /* "cjoin.pyx":7
  * cimport numpy as cnp
  * from numpy cimport ndarray, int64_t
  * cnp.import_array()             # <<<<<<<<<<<<<<
@@ -18823,19 +18832,19 @@ if (!__Pyx_RefNanny) {
  */
   __pyx_t_2 = __pyx_f_5numpy_import_array(); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 7, __pyx_L1_error)
 
-  /* "pyarrow_ops/cjoin.pyx":10
+  /* "cjoin.pyx":10
  * 
  * @cython.boundscheck(False)
  * def inner_join(             # <<<<<<<<<<<<<<
  *         const int64_t[:] left_idxs, const int64_t[:] right_idxs,
  *         const int64_t[:] left_counts, const int64_t[:] right_counts,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_11pyarrow_ops_5cjoin_1inner_join, NULL, __pyx_n_s_pyarrow_ops_cjoin); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5cjoin_1inner_join, NULL, __pyx_n_s_cjoin); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_inner_join, __pyx_t_1) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyarrow_ops/cjoin.pyx":1
+  /* "cjoin.pyx":1
  * import cython             # <<<<<<<<<<<<<<
  * from cython import Py_ssize_t
  * import numpy as np
@@ -19005,11 +19014,11 @@ if (!__Pyx_RefNanny) {
   __Pyx_XDECREF(__pyx_t_1);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init pyarrow_ops.cjoin", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init cjoin", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     Py_CLEAR(__pyx_m);
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init pyarrow_ops.cjoin");
+    PyErr_SetString(PyExc_ImportError, "init cjoin");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
