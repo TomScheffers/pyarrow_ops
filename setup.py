@@ -2,6 +2,8 @@ from setuptools import setup, find_packages
 from setuptools import Extension
 from distutils.command.build import build as build_orig
 import numpy as np
+from Cython.Build import cythonize
+
 
 __version__ = "0.0.7"
 
@@ -23,7 +25,6 @@ class build(build_orig):
         import numpy
         for extension in self.distribution.ext_modules:
             extension.include_dirs.append(numpy.get_include())
-        from Cython.Build import cythonize
         self.distribution.ext_modules = cythonize(self.distribution.ext_modules,
                                                   language_level=3)
 
@@ -42,7 +43,13 @@ setup(
     download_url='https://pypi.org/project/pyarrow-ops/',
     include_package_data=True,
     ext_modules=extensions,
-    install_requires=["numpy", "pyarrow"],
+    include_dirs=np.get_include(),
+    install_requires=[
+        'numpy>=1.19.2',
+        'PyObjC;platform_system=="Darwin"',
+        'PyGObject;platform_system=="Linux"',
+        'pyarrow>=3.0'
+    ],
     zip_safe=False,
     
     # setup_requires=["numpy"],
